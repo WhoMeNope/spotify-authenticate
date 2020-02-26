@@ -24,5 +24,7 @@ mkShell {
     [[ -d .goroot ]]  || mkdir .goroot
     export GOCACHE=$(pwd)/.gocache
     export GOPATH=$(pwd)/.goroot
+
+    [ -e .env ] && source .env
   '';
 }

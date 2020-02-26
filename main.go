@@ -13,9 +13,9 @@ import (
 )
 
 type environment struct {
-  ClientID     string `env:"SPOTIFY_CLIENT_ID"`
-  ClientSecret string `env:"SPOTIFY_CLIENT_SECRET"`
-  RedirectPort string `env:"SPOTIFY_REDIRECT_PORT"`
+  ClientID     string `env:"CLIENT_ID"`
+  ClientSecret string `env:"CLIENT_SECRET"`
+  RedirectPort string `env:"REDIRECT_PORT"`
 }
 
 var env environment
