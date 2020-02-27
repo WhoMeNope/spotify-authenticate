@@ -10,6 +10,7 @@ import (
 
   "github.com/rs/xid"
   spotify "github.com/zmb3/spotify"
+  "golang.org/x/oauth2"
 )
 
 type environment struct {
@@ -20,7 +21,7 @@ type environment struct {
 
 var env environment
 
-func authSpotify(authCallback func(string), clientCallback func(spotify.Client, chan int)) error {
+func authSpotify(authCallback func(string), authedCallback func(*oauth2.Token)) error {
   // the redirect URL must be an exact match of a URL you've registered for your application
   // scopes determine which permissions the user is prompted to authorize
   auth := spotify.NewAuthenticator("http://localhost:"+env.RedirectPort+"/", spotify.ScopeUserReadRecentlyPlayed)
@@ -34,8 +35,7 @@ func authSpotify(authCallback func(string), clientCallback func(spotify.Client, 
   mux := http.NewServeMux()
   server := &http.Server{Addr: ":" + env.RedirectPort, Handler: mux}
 
-  // create done and cancel channels
-  done := make(chan int)
+  // create cancellable context for local server - used to handle auth redirect
   ctx, cancel := context.WithCancel(context.Background())
 
   // redirect handler
@@ -50,16 +50,10 @@ func authSpotify(authCallback func(string), clientCallback func(spotify.Client, 
     defer cancel()
 
     // the client can now be used to make authenticated requests
-    fmt.Fprintf(w, "Authenticated")
     log.Println("Authenticated")
 
-    // create a client using the specified token
-    client := auth.NewClient(token)
-
     // callback
-    go func() {
-      clientCallback(client, done)
-    }()
+    authedCallback(token)
   }
   // get the user to this URL - how you do that is up to you
   // you should specify a unique state string to identify the session
@@ -79,12 +73,10 @@ func authSpotify(authCallback func(string), clientCallback func(spotify.Client, 
 
   select {
   case <-ctx.Done():
-    // Shutdown the server when the context is canceled
+    // Shutdown the server when its context gets canceled
     server.Shutdown(ctx)
   }
 
-  // wait for done
-  <-done
   return nil
 }
 func main() {
@@ -100,20 +92,13 @@ func main() {
     // present authentication to user
     fmt.Println("To authenticate go to : ", url)
   }
-
-  clientCallback := func(client spotify.Client, done chan int) {
-    // get recently-played
-    items, err := client.PlayerRecentlyPlayed()
-    if err != nil {
-      log.Fatal("error", err)
-    }
-    log.Println(items)
-
-    done<-0
+  authedCallback := func(token *oauth2.Token) {
+    fmt.Println("Access token:", token.AccessToken)
+    fmt.Println("Refresh token:", token.RefreshToken)
   }
 
   // start spotify auth
-  if err = authSpotify(authCallback, clientCallback); err != nil {
+  if err = authSpotify(authCallback, authedCallback); err != nil {
     log.Fatal(err)
   }
 }
