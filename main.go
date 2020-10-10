@@ -2,6 +2,7 @@ package main
 
 import (
 	"context"
+	"flag"
 	"fmt"
 	"log"
 	"net/http"
@@ -14,9 +15,9 @@ import (
 )
 
 type environment struct {
-	ClientID     string `env:"CLIENT_ID"`
-	ClientSecret string `env:"CLIENT_SECRET"`
-	RedirectPort string `env:"REDIRECT_PORT"`
+	ClientID     string `env:"SPOTIFY_CLIENT_ID"`
+	ClientSecret string `env:"SPOTIFY_CLIENT_SECRET"`
+	RedirectPort string
 }
 
 var env environment
@@ -96,6 +97,12 @@ func main() {
 	if err != nil {
 		log.Fatal(err)
 	}
+
+	// parse flags
+	portPtr := flag.String("p", "3000", "local port for authentication redirect")
+	flag.Parse()
+	env.RedirectPort = *portPtr
+
 	fmt.Println("Environment", env)
 
 	// spotify
