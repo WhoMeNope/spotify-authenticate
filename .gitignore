@@ -1,3 +1,5 @@
+.gocache/
+.goroot/
 spotify-authenticate
 
 .env
