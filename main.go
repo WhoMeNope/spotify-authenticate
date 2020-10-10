@@ -6,8 +6,7 @@ import (
 	"fmt"
 	"log"
 	"net/http"
-
-	goenv "github.com/Netflix/go-env"
+	"os"
 
 	"github.com/rs/xid"
 	spotify "github.com/zmb3/spotify"
@@ -94,11 +93,9 @@ func authSpotify(authCallback func(string), authedCallback func(*oauth2.Token)) 
 func main() {
 	log.SetFlags(0) // do not print timestamps
 
-	// parse environment
-	_, err := goenv.UnmarshalFromEnviron(&env)
-	if err != nil {
-		log.Fatalln(err)
-	}
+	// get from environment
+	env.ClientID = os.Getenv("SPOTIFY_CLIENT_ID")
+	env.ClientSecret = os.Getenv("SPOTIFY_CLIENT_SECRET")
 
 	// parse flags
 	portPtr := flag.String("p", "3000", "local port for authentication redirect")
@@ -122,7 +119,7 @@ func main() {
 	}
 
 	// start spotify auth
-	if err = authSpotify(authCallback, authedCallback); err != nil {
+	if err := authSpotify(authCallback, authedCallback); err != nil {
 		log.Fatalln(err)
 	}
 }
