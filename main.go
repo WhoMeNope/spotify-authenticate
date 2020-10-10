@@ -26,7 +26,14 @@ func authSpotify(authCallback func(string), authedCallback func(*oauth2.Token)) 
 	// scopes determine which permissions the user is prompted to authorize
 	auth := spotify.NewAuthenticator(
 		"http://localhost:"+env.RedirectPort+"/",
+		spotify.ScopePlaylistReadCollaborative,
+		spotify.ScopePlaylistReadPrivate,
+		spotify.ScopeUserReadCurrentlyPlaying,
+		spotify.ScopeUserReadPlaybackState,
 		spotify.ScopeUserReadRecentlyPlayed,
+		spotify.ScopeUserFollowRead,
+		spotify.ScopeUserLibraryRead,
+		spotify.ScopeUserTopRead,
 	)
 
 	auth.SetAuthInfo(env.ClientID, env.ClientSecret)
