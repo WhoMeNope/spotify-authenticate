@@ -103,7 +103,10 @@ func main() {
 	flag.Parse()
 	env.RedirectPort = *portPtr
 
-	fmt.Println("Environment", env)
+	// check environment
+	if env.ClientID == "" || env.ClientSecret == "" {
+		log.Fatalln("SPOTIFY_CLIENT_ID and SPOTIFY_CLIENT_SECRET need to be set in env")
+	}
 
 	// spotify
 	authCallback := func(url string) {
