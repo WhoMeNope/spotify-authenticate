@@ -13,5 +13,6 @@ mkShell {
   buildInputs = [
     go
     gotools
+    go-langserver
   ];
 }
