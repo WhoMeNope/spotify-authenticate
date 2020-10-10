@@ -92,10 +92,12 @@ func authSpotify(authCallback func(string), authedCallback func(*oauth2.Token)) 
 }
 
 func main() {
+	log.SetFlags(0) // do not print timestamps
+
 	// parse environment
 	_, err := goenv.UnmarshalFromEnviron(&env)
 	if err != nil {
-		log.Fatal(err)
+		log.Fatalln(err)
 	}
 
 	// parse flags
@@ -111,15 +113,16 @@ func main() {
 	// spotify
 	authCallback := func(url string) {
 		// present authentication to user
-		fmt.Println("To authenticate go to : ", url)
+		fmt.Println("To authenticate visit :\n", url)
 	}
 	authedCallback := func(token *oauth2.Token) {
+		fmt.Println()
 		fmt.Println("Access token:", token.AccessToken)
 		fmt.Println("Refresh token:", token.RefreshToken)
 	}
 
 	// start spotify auth
 	if err = authSpotify(authCallback, authedCallback); err != nil {
-		log.Fatal(err)
+		log.Fatalln(err)
 	}
 }
