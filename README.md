@@ -3,8 +3,12 @@
 Simple utility to obtain a refreshable user token for Spotify.
 
 ## Usage
-1. Clone this repo
-2. [Create a Spotify app](https://developer.spotify.com/dashboard/)
-3. Add a redirect url pointing to localhost (e.g. `http://localhost:3000/` - mind the trailing slash)
-4. Inside the cloned repo, create a `.env` file with `CLIENT_ID`, `CLIENT_SECRET` and `REDIRECT_PORT`
-5. `go run main.go` and follow the instructions there
+
+1. [Create a Spotify app](https://developer.spotify.com/dashboard/)
+2. In the Spotify app settings - add `http://localhost:3000/` to
+   `Redirect URIs`
+3. Clone this repo
+4. Add `SPOTIFY_CLIENT_ID` and `SPOTIFY_CLIENT_SECRET` to your
+   environment
+5. `go run main.go`
+
